@@ -3,102 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Max AI | Secure Sync</title>
+    <title>Max AI | Social Identity Hub</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
-        body { background-color: #050505; color: #fff; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { text-align: center; padding: 40px; border-radius: 28px; background: #0f0f0f; border: 1px solid #1a1a1a; max-width: 400px; width: 90%; }
-        .logo-container img { width: 100px; margin-bottom: 24px; }
-        h1 { font-size: 22px; font-weight: 900; margin-bottom: 8px; color: #007bff; }
-        p { color: #555; font-size: 13px; margin-bottom: 30px; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         
-        /* Google Button Center */
-        #g_id_signin { margin-bottom: 25px; display: flex; justify-content: center; }
+        body { background-color: #050505; color: #fff; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { text-align: center; padding: 40px; border-radius: 32px; background: linear-gradient(145deg, #0f0f0f, #000); border: 1px solid #1a1a1a; max-width: 440px; width: 90%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8); }
+        
+        .logo-main { width: 100px; margin-bottom: 20px; filter: drop-shadow(0 0 10px rgba(0, 123, 255, 0.3)); }
+        h1 { font-size: 26px; font-weight: 900; margin-bottom: 10px; color: #fff; letter-spacing: -1px; text-transform: uppercase; }
+        p { color: #555; font-size: 14px; margin-bottom: 30px; line-height: 1.5; }
 
-        .input-stack { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; opacity: 0.5; pointer-events: none; transition: 0.5s; }
-        .active-stack { opacity: 1; pointer-events: auto; }
+        /* Google Section */
+        #g_id_signin { display: flex; justify-content: center; margin-bottom: 20px; }
+        #userInfo { font-size: 14px; color: #007bff; font-weight: bold; margin-bottom: 20px; display: none; }
 
-        select, input { background: #0a0a0a; color: #fff; border: 1px solid #222; padding: 16px; border-radius: 12px; font-size: 15px; outline: none; }
+        /* Platform Selection */
+        .platform-grid { display: none; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+        .platform-card { background: #0a0a0a; border: 1px solid #222; padding: 20px; border-radius: 20px; cursor: pointer; transition: 0.3s; position: relative; }
+        .platform-card:hover { border-color: #007bff; background: #111; transform: translateY(-5px); }
+        .platform-card img { width: 55px; height: 55px; margin-bottom: 10px; border-radius: 12px; }
+        .platform-card.selected { border-color: #007bff; background: rgba(0, 123, 255, 0.1); }
+        .platform-label { font-size: 12px; font-weight: bold; color: #888; text-transform: uppercase; }
+
+        /* Input Section */
+        #syncForm { display: none; flex-direction: column; gap: 15px; transition: 0.5s; }
         .row { display: flex; gap: 10px; }
+        select, input { background: #0a0a0a; color: #fff; border: 1px solid #222; padding: 18px; border-radius: 14px; font-size: 16px; outline: none; }
         select { width: 110px; }
         input { flex: 1; }
 
-        button { width: 100%; padding: 18px; border-radius: 12px; border: none; background: #007bff; color: #fff; font-weight: 700; cursor: pointer; transition: 0.3s; }
-        button:disabled { background: #222; cursor: not-allowed; }
-        #userInfo { font-size: 12px; color: #007bff; margin-bottom: 15px; font-weight: bold; }
+        button { width: 100%; padding: 18px; border-radius: 14px; border: none; background: #007bff; color: #fff; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.4s; margin-top: 10px; }
+        button:hover { background: #0056b3; box-shadow: 0 10px 20px rgba(0, 123, 255, 0.4); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="logo-container">
-        <img src="https://image2url.com/r2/default/images/1775567043691-489f419b-f083-426c-8d98-4123875887bb.png" alt="Max AI">
-    </div>
-    <h1>IDENTITY SYNC</h1>
-    <p>Step 1: Sign in with Google to verify your legal name.</p>
+    <img src="https://image2url.com/r2/default/images/1775567043691-489f419b-f083-426c-8d98-4123875887bb.png" class="logo-main" alt="Max AI">
     
-    <div id="g_id_onload"
-         data-client_id="YOUR_GOOGLE_CLIENT_ID_HERE"
-         data-callback="handleCredentialResponse"
-         data-auto_prompt="false">
-    </div>
-    <div id="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_black" data-text="signin_with" data-size="large" data-logo_alignment="left"></div>
+    <h1>Social Identity Sync</h1>
+    <p id="instruction">Sign in with Google to begin the verification protocol.</p>
 
     <div id="userInfo"></div>
+    <div id="g_id_onload"
+         data-client_id="181249615928-1j90q5miv32j3juc6tvn9ouhs2s7p700.apps.googleusercontent.com"
+         data-callback="handleAuth"
+         data-auto_prompt="false">
+    </div>
+    <div id="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_black" data-text="signin_with" data-size="large"></div>
 
-    <div class="input-stack" id="phoneStack">
-        <p style="margin-bottom: 10px; color: #888;">Step 2: Enter your phone number.</p>
-        <div class="row">
-            <select id="country"><option value="234">🇳🇬 +234</option><option value="1">🇺🇸 +1</option></select>
-            <input type="tel" id="phone" placeholder="812 345 6789">
+    <div class="platform-grid" id="platformGrid">
+        <div class="platform-card" onclick="selectPlatform('WhatsApp', this)">
+            <img src="https://image2url.com/r2/default/images/1775571808762-eca53ec5-1ea3-4e3c-89e8-bab3e9fca3e2.png" alt="WhatsApp">
+            <div class="platform-label">WhatsApp</div>
         </div>
-        <button onclick="initiateSync()" id="mainBtn">SYNC TO MAX CORE</button>
+        <div class="platform-card" onclick="selectPlatform('Telegram', this)">
+            <img src="https://image2url.com/r2/default/images/1775571676100-8e0f9bcb-bb91-4926-9c15-13f1b67cf461.png" alt="Telegram">
+            <div class="platform-label">Telegram</div>
+        </div>
+    </div>
+
+    <div id="syncForm">
+        <div class="row">
+            <select id="country"><option value="234">🇳🇬 +234</option><option value="1">🇺🇸 +1</option><option value="44">🇬🇧 +44</option></select>
+            <input type="tel" id="phone" placeholder="Phone Number">
+        </div>
+        <button onclick="executeSync()" id="syncBtn">LINK YOUR NUMBER</button>
     </div>
 </div>
 
 <script>
-    let googleName = "";
-    let googleEmail = "";
+    let userData = { name: "", email: "", platform: "" };
 
-    // 1. Handle the Google Login Response
-    function handleCredentialResponse(response) {
-        // Decode the JWT token to get user info
-        const responsePayload = parseJwt(response.credential);
-        
-        googleName = responsePayload.name;
-        googleEmail = responsePayload.email;
+    function handleAuth(response) {
+        const payload = parseJwt(response.credential);
+        userData.name = payload.name;
+        userData.email = payload.email;
 
-        // Update UI
-        document.getElementById('userInfo').innerText = `Verified as: ${googleName}`;
-        document.getElementById('phoneStack').classList.add('active-stack');
+        document.getElementById('instruction').innerText = "Select the social media platform you would like to link.";
         document.getElementById('g_id_signin').style.display = "none";
+        document.getElementById('userInfo').style.display = "block";
+        document.getElementById('userInfo').innerText = `ACCESS GRANTED: ${userData.name.toUpperCase()}`;
+        document.getElementById('platformGrid').style.display = "grid";
     }
 
     function parseJwt(token) {
-        var base64Url = token.split('.')[1];
-        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        return JSON.parse(jsonPayload);
+        return JSON.parse(window.atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
     }
 
-    function initiateSync() {
+    function selectPlatform(type, element) {
+        userData.platform = type;
+        document.querySelectorAll('.platform-card').forEach(c => c.classList.remove('selected'));
+        element.classList.add('selected');
+
+        document.getElementById('syncForm').style.display = "flex";
+        document.getElementById('syncBtn').innerText = `LINK YOUR ${type.toUpperCase()} NUMBER`;
+    }
+
+    function executeSync() {
         const country = document.getElementById('country').value;
         const local = document.getElementById('phone').value;
-        const cleanLocal = local.replace(/\D/g, '').replace(/^0+/, '');
+        const cleanPhone = country + local.replace(/\D/g, '').replace(/^0+/, '');
         
-        const fullPhone = country + cleanLocal;
-        const botNumber = "2348126928258"; 
-
         const urlParams = new URLSearchParams(window.location.search);
-        const family = urlParams.get('family') || "UNKNOWN-HUB";
+        const family = urlParams.get('family') || "CORE-HUB";
 
-        // 2. Added Google Info to the message for Max
-        const message = `VERIFY_REQUEST\nFamily: ${family}\nUser: ${fullPhone}\nName: ${googleName}\nEmail: ${googleEmail}`;
-        const encodedMsg = encodeURIComponent(message);
+        // Construct the handshake message
+        const message = `VERIFY_REQUEST\nPlatform: ${userData.platform}\nFamily: ${family}\nUser: ${cleanPhone}\nName: ${userData.name}\nEmail: ${userData.email}`;
+        
+        document.getElementById('syncBtn').innerText = "SYNCHRONIZING...";
 
-        window.location.href = `https://wa.me/${botNumber}?text=${encodedMsg}`;
+        if (userData.platform === 'WhatsApp') {
+            const botNum = "2348126928258"; 
+            window.location.href = `https://wa.me/${botNum}?text=${encodeURIComponent(message)}`;
+        } else {
+            // TELEGRAM REDIRECT to @ttfl_customer_bot
+            // We pass the data in the "start" parameter (Base64 encoded for Telegram)
+            const tgBot = "ttfl_customer_bot"; 
+            const encodedData = btoa(`${family}_${cleanPhone}`).substring(0, 64);
+            window.location.href = `https://t.me/${tgBot}?start=${encodedData}`;
+        }
     }
 </script>
 
