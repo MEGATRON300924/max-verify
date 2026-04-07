@@ -3,62 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Max AI | Secure Verification</title>
+    <title>Max AI | Global Sync</title>
     <style>
-        body {
-            background-color: #050505;
-            color: #ffffff;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            text-align: center;
-            padding: 40px;
-            border-radius: 24px;
-            background: linear-gradient(145deg, #111, #000);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 123, 255, 0.1);
-            max-width: 380px;
-            width: 90%;
-        }
-        .logo-container img {
-            width: 120px; /* Adjusted for your logo */
-            height: auto;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 8px rgba(0, 123, 255, 0.3));
-        }
-        h1 { 
-            font-size: 24px; 
-            font-weight: 800; 
-            letter-spacing: -0.5px; 
-            margin-bottom: 8px;
-            background: linear-gradient(to right, #fff, #888);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        p { color: #666; font-size: 14px; margin-bottom: 32px; line-height: 1.5; }
+        body { background-color: #050505; color: #fff; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { text-align: center; padding: 40px; border-radius: 24px; background: #111; border: 1px solid #222; max-width: 400px; width: 90%; }
+        .logo-container img { width: 100px; margin-bottom: 20px; }
+        h1 { font-size: 22px; font-weight: 800; margin-bottom: 5px; color: #007bff; }
+        p { color: #666; font-size: 13px; margin-bottom: 30px; }
+
+        /* Input Styling */
+        .phone-input-container { display: flex; gap: 10px; margin-bottom: 25px; }
         
-        .input-group { margin-bottom: 24px; text-align: left; }
-        label { display: block; font-size: 12px; color: #444; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
-        
+        select {
+            background: #0a0a0a;
+            color: #fff;
+            border: 1px solid #222;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 14px;
+            width: 100px;
+            outline: none;
+        }
+
         input {
-            width: 100%;
-            padding: 16px;
+            flex: 1;
+            padding: 15px;
             border-radius: 12px;
             border: 1px solid #222;
             background: #0a0a0a;
             color: #fff;
             font-size: 16px;
             outline: none;
-            box-sizing: border-box;
-            transition: 0.2s;
         }
-        input:focus { border-color: #007bff; box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1); }
-        
+        input:focus, select:focus { border-color: #007bff; }
+
         button {
             width: 100%;
             padding: 16px;
@@ -67,71 +45,77 @@
             background: #007bff;
             color: #fff;
             font-weight: 700;
-            font-size: 16px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: 0.3s;
         }
-        button:hover { background: #0056b3; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0, 123, 255, 0.3); }
-        button:active { transform: translateY(0); }
+        button:hover { background: #0056b3; transform: translateY(-2px); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="logo-container">
-        <img src="https://image2url.com/r2/default/images/1775567043691-489f419b-f083-426c-8d98-4123875887bb.png" alt="Max AI Logo">
+        <img src="https://image2url.com/r2/default/images/1775567043691-489f419b-f083-426c-8d98-4123875887bb.png" alt="Max AI">
     </div>
-    <h1>IDENTITY VERIFY</h1>
-    <p>Link your phone number to the Max AI ecosystem and sync with Megatron.</p>
+    <h1>IDENTITY SYNC</h1>
+    <p>Select your country and enter your number to link with Max AI.</p>
     
-    <div class="input-group">
-        <label>Phone Number</label>
-        <input type="tel" id="phone" placeholder="+234..." autocomplete="off">
+    <div class="phone-input-container">
+        <select id="countryCode">
+            <option value="234">🇳🇬 +234</option>
+            <option value="1">🇺🇸 +1</option>
+            <option value="44">🇬🇧 +44</option>
+            <option value="27">🇿🇦 +27</option>
+            <option value="233">🇬🇭 +233</option>
+            <option value="254">🇰🇪 +254</option>
+            <option value="91">🇮🇳 +91</option>
+            <option value="1">🇨🇦 +1</option>
+        </select>
+        
+        <input type="tel" id="localPhone" placeholder="812 345 6789">
     </div>
     
-    <button onclick="redirectToWhatsApp()" id="actionBtn">CONNECT TO WHATSAPP</button>
+    <button onclick="syncWithMax()" id="btn">SYNC TO BOT</button>
 </div>
 
 <script>
-    function redirectToWhatsApp() {
-        const btn = document.getElementById('actionBtn');
-        let userPhone = document.getElementById('phone').value;
-        
-        if (!userPhone || userPhone.length < 5) {
-            alert("Please enter a valid phone number.");
+    function syncWithMax() {
+        const country = document.getElementById('countryCode').value;
+        const local = document.getElementById('localPhone').value;
+        const btn = document.getElementById('btn');
+
+        if (!local) {
+            alert("Please enter your local number.");
             return;
         }
 
-        // 1. Clean the user's input (removes +, spaces, dashes)
-        const cleanUserPhone = userPhone.replace(/\D/g, '');
+        // Clean the local number (remove first 0 if they typed it, and any spaces)
+        let cleanLocal = local.replace(/\D/g, '');
+        if (cleanLocal.startsWith('0')) {
+            cleanLocal = cleanLocal.substring(1);
+        }
 
-        // 2. !!! SET YOUR BOT NUMBER HERE !!!
-        // Use full international format, NO PLUS (+). Example: "2348012345678"
-        const botNumber = "2348000000000"; 
+        const fullUserPhone = country + cleanLocal;
 
-        // 3. Get Family ID from URL (or default to JDION-CORE)
+        // THE CORRECT BOT NUMBER (2348126928258)
+        const botNumber = "2348126928258"; 
+
+        // Get Family ID from URL
         const urlParams = new URLSearchParams(window.location.search);
-        const familyCode = urlParams.get('family') || "JDION-CORE";
+        const family = urlParams.get('family') || "JDION-CORE";
 
-        // 4. Generate a unique session ID
-        const sessionID = Math.random().toString(36).substring(7).toUpperCase();
+        const message = `VERIFY_REQUEST\nFamily: ${family}\nUser: ${fullUserPhone}`;
+        const encodedMsg = encodeURIComponent(message);
 
-        // 5. Build the message
-        // Max (via Botpress) will see this and verify the user
-        const message = `VERIFY_REQUEST\nFamily: ${familyCode}\nUser: ${cleanUserPhone}\nSession: ${sessionID}`;
-        const encodedMessage = encodeURIComponent(message);
+        // Final Redirect URL
+        const finalURL = `https://wa.me/${botNumber}?text=${encodedMsg}`;
 
-        // 6. The Magic Link
-        const whatsappURL = `https://wa.me/${botNumber}?text=${encodedMessage}`;
-
-        // Visual feedback
-        btn.innerText = "CONNECTING...";
+        btn.innerText = "OPENING WHATSAPP...";
         btn.style.background = "#222";
 
-        // 7. Execute Redirect
         setTimeout(() => {
-            window.location.href = whatsappURL;
-        }, 500);
+            window.location.href = finalURL;
+        }, 600);
     }
 </script>
 
