@@ -3,78 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Max AI | Global Identity Sync</title>
+    <title>Max AI | Secure Sync</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { background-color: #050505; color: #fff; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { text-align: center; padding: 40px; border-radius: 28px; background: #0f0f0f; border: 1px solid #1a1a1a; max-width: 400px; width: 90%; }
+        .logo-container img { width: 100px; margin-bottom: 24px; }
+        h1 { font-size: 22px; font-weight: 900; margin-bottom: 8px; color: #007bff; }
+        p { color: #555; font-size: 13px; margin-bottom: 30px; }
         
-        body { 
-            background-color: #050505; 
-            color: #fff; 
-            font-family: 'Inter', sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
-            overflow: hidden;
-        }
-        
-        .container { 
-            text-align: center; 
-            padding: 40px; 
-            border-radius: 28px; 
-            background: linear-gradient(145deg, #0f0f0f, #000); 
-            border: 1px solid #1a1a1a; 
-            max-width: 420px; 
-            width: 90%; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
+        /* Google Button Center */
+        #g_id_signin { margin-bottom: 25px; display: flex; justify-content: center; }
 
-        .logo-container img { 
-            width: 110px; 
-            margin-bottom: 24px; 
-            filter: drop-shadow(0 0 10px rgba(0, 123, 255, 0.2));
-        }
+        .input-stack { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; opacity: 0.5; pointer-events: none; transition: 0.5s; }
+        .active-stack { opacity: 1; pointer-events: auto; }
 
-        h1 { font-size: 24px; font-weight: 900; margin-bottom: 8px; letter-spacing: -1px; text-transform: uppercase; color: #007bff; }
-        p { color: #555; font-size: 14px; margin-bottom: 35px; line-height: 1.4; }
-
-        /* Input Layout */
-        .input-stack { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
-        
+        select, input { background: #0a0a0a; color: #fff; border: 1px solid #222; padding: 16px; border-radius: 12px; font-size: 15px; outline: none; }
         .row { display: flex; gap: 10px; }
-
-        select, input {
-            background: #0a0a0a;
-            color: #fff;
-            border: 1px solid #222;
-            padding: 18px;
-            border-radius: 14px;
-            font-size: 16px;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        select { width: 130px; cursor: pointer; }
+        select { width: 110px; }
         input { flex: 1; }
 
-        input:focus, select:focus { border-color: #007bff; box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1); }
-
-        button {
-            width: 100%;
-            padding: 18px;
-            border-radius: 14px;
-            border: none;
-            background: #007bff;
-            color: #fff;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        button:hover { background: #0056b3; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 123, 255, 0.3); }
-        button:active { transform: scale(0.98); }
+        button { width: 100%; padding: 18px; border-radius: 12px; border: none; background: #007bff; color: #fff; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        button:disabled { background: #222; cursor: not-allowed; }
+        #userInfo { font-size: 12px; color: #007bff; margin-bottom: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -84,84 +35,70 @@
         <img src="https://image2url.com/r2/default/images/1775567043691-489f419b-f083-426c-8d98-4123875887bb.png" alt="Max AI">
     </div>
     <h1>IDENTITY SYNC</h1>
-    <p>Connect your global device to the Max AI core. Verified via secure WhatsApp tunnel.</p>
+    <p>Step 1: Sign in with Google to verify your legal name.</p>
     
-    <div class="input-stack">
-        <div class="row">
-            <select id="countrySelector"></select>
-            <input type="tel" id="phoneNumber" placeholder="Local number" autocomplete="off">
-        </div>
+    <div id="g_id_onload"
+         data-client_id="YOUR_GOOGLE_CLIENT_ID_HERE"
+         data-callback="handleCredentialResponse"
+         data-auto_prompt="false">
     </div>
-    
-    <button onclick="initiateSync()" id="mainBtn">INITIALIZE CONNECTION</button>
+    <div id="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_black" data-text="signin_with" data-size="large" data-logo_alignment="left"></div>
+
+    <div id="userInfo"></div>
+
+    <div class="input-stack" id="phoneStack">
+        <p style="margin-bottom: 10px; color: #888;">Step 2: Enter your phone number.</p>
+        <div class="row">
+            <select id="country"><option value="234">🇳🇬 +234</option><option value="1">🇺🇸 +1</option></select>
+            <input type="tel" id="phone" placeholder="812 345 6789">
+        </div>
+        <button onclick="initiateSync()" id="mainBtn">SYNC TO MAX CORE</button>
+    </div>
 </div>
 
 <script>
-    // 1. COMPREHENSIVE COUNTRY DATA
-    const countries = [
-        { name: "Nigeria", code: "234", flag: "🇳🇬" },
-        { name: "United States", code: "1", flag: "🇺🇸" },
-        { name: "United Kingdom", code: "44", flag: "🇬🇧" },
-        { name: "Canada", code: "1", flag: "🇨🇦" },
-        { name: "Ghana", code: "233", flag: "🇬🇭" },
-        { name: "South Africa", code: "27", flag: "🇿🇦" },
-        { name: "Kenya", code: "254", flag: "🇰🇪" },
-        { name: "India", code: "91", flag: "🇮🇳" },
-        { name: "Australia", code: "61", flag: "🇦🇺" },
-        { name: "Germany", code: "49", flag: "🇩🇪" },
-        { name: "France", code: "33", flag: "🇫🇷" },
-        { name: "China", code: "86", flag: "🇨🇳" },
-        { name: "Brazil", code: "55", flag: "🇧🇷" },
-        { name: "UAE", code: "971", flag: "🇦🇪" },
-        { name: "Egypt", code: "20", flag: "🇪🇬" },
-        { name: "Jamaica", code: "1876", flag: "🇯🇲" },
-        // ... and the rest are added via the loop below
-    ];
+    let googleName = "";
+    let googleEmail = "";
 
-    // For a truly "All Countries" list without huge code, we'll fetch or pre-populate common ones
-    // and sort them. For this specific project, I'll add a few more critical ones.
-    const selector = document.getElementById('countrySelector');
-    
-    countries.sort((a, b) => a.name.localeCompare(b.name)).forEach(c => {
-        let opt = document.createElement('option');
-        opt.value = c.code;
-        opt.innerHTML = `${c.flag} +${c.code}`;
-        if(c.code === "234") opt.selected = true; // Default to Nigeria
-        selector.appendChild(opt);
-    });
+    // 1. Handle the Google Login Response
+    function handleCredentialResponse(response) {
+        // Decode the JWT token to get user info
+        const responsePayload = parseJwt(response.credential);
+        
+        googleName = responsePayload.name;
+        googleEmail = responsePayload.email;
+
+        // Update UI
+        document.getElementById('userInfo').innerText = `Verified as: ${googleName}`;
+        document.getElementById('phoneStack').classList.add('active-stack');
+        document.getElementById('g_id_signin').style.display = "none";
+    }
+
+    function parseJwt(token) {
+        var base64Url = token.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    }
 
     function initiateSync() {
-        const countryCode = document.getElementById('countrySelector').value;
-        const localNum = document.getElementById('phoneNumber').value;
-        const btn = document.getElementById('mainBtn');
-
-        if (!localNum || localNum.length < 6) {
-            alert("Protocol Error: Please enter a valid device number.");
-            return;
-        }
-
-        // Clean user input
-        let cleanLocal = localNum.replace(/\D/g, '');
-        if (cleanLocal.startsWith('0')) cleanLocal = cleanLocal.substring(1);
-
-        const fullUserPhone = countryCode + cleanLocal;
-
-        // BOT CONFIGURATION
+        const country = document.getElementById('country').value;
+        const local = document.getElementById('phone').value;
+        const cleanLocal = local.replace(/\D/g, '').replace(/^0+/, '');
+        
+        const fullPhone = country + cleanLocal;
         const botNumber = "2348126928258"; 
-        const urlParams = new URLSearchParams(window.location.search);
-        const family = urlParams.get('family') || "JDION-CORE";
 
-        const message = `VERIFY_REQUEST\nFamily: ${family}\nUser: ${fullUserPhone}`;
+        const urlParams = new URLSearchParams(window.location.search);
+        const family = urlParams.get('family') || "UNKNOWN-HUB";
+
+        // 2. Added Google Info to the message for Max
+        const message = `VERIFY_REQUEST\nFamily: ${family}\nUser: ${fullPhone}\nName: ${googleName}\nEmail: ${googleEmail}`;
         const encodedMsg = encodeURIComponent(message);
 
-        // FINAL REDIRECT
-        btn.innerText = "TUNNELING TO CORE...";
-        btn.style.background = "#111";
-        btn.style.color = "#007bff";
-
-        setTimeout(() => {
-            window.location.href = `https://wa.me/${botNumber}?text=${encodedMsg}`;
-        }, 800);
+        window.location.href = `https://wa.me/${botNumber}?text=${encodedMsg}`;
     }
 </script>
 
