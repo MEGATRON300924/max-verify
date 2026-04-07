@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Max AI | Secure Verification</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 50px rgba(0, 123, 255, 0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+        h1 { font-weight: 900; letter-spacing: 2px; color: #007bff; }
+        p { color: #888; font-size: 14px; margin-bottom: 30px; }
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            border: none;
+            background: #111;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            border: 1px solid #333;
+            box-sizing: border-box;
+        }
+        input:focus { border-color: #007bff; }
+        button {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            background: #007bff;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover { background: #0056b3; transform: scale(1.02); }
+        .logo { font-size: 50px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo">💠</div>
+    <h1>MAX AI</h1>
+    <p>Enter your phone number to link your family account with Megatron's core.</p>
+    
+    <input type="tel" id="phone" placeholder="+234 000 000 0000">
+    <button onclick="redirectToWhatsApp()">VERIFY & CONNECT</button>
+</div>
+
+<script>
+    function redirectToWhatsApp() {
+        const phoneInput = document.getElementById('phone').value;
+        if (!phoneInput) {
+            alert("Please enter a phone number.");
+            return;
+        }
+
+        // 1. Get Family ID from URL (e.g., ?family=JDION-55)
+        const urlParams = new URLSearchParams(window.location.search);
+        const familyCode = urlParams.get('family') || "GUEST";
+
+        // 2. Generate a Unique Code (Time-based + Random)
+        const uniqueID = Math.random().toString(36).substring(7).toUpperCase();
+        const finalSecretCode = `VERIFY-${familyCode}-${uniqueID}`;
+
+        // 3. Your Bot's WhatsApp Number (Include country code, no +)
+        const botNumber = "234XXXXXXXXXX"; 
+
+        // 4. Construct the custom message
+        const message = `Hello Max, please verify my identity. Code: ${finalSecretCode}`;
+        const encodedMessage = encodeURIComponent(message);
+
+        // 5. Redirect to WhatsApp
+        window.location.href = `https://wa.me/${botNumber}?text=${encodedMessage}`;
+    }
+</script>
+
+</body>
+</html>
